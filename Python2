@@ -18,4 +18,14 @@ meal = meal + meal * tax
 total = meal + meal * tip
 print total
 ___________________________________________________________________________________
+name = raw_input("What is your name? ")
+quest = raw_input("What is your quest? ")
+color = raw_input("What is your favorite color? ")
 
+print "Ah, so your name is %s, your quest is %s, " \
+"and your favorite color is %s." % (name, quest, color)
+___________________________________________________________________________________
+my_string = raw_input("Insert String: ")
+print len(my_string)
+print my_string.upper()
+___________________________________________________________________________________
