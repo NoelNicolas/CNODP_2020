@@ -29,3 +29,9 @@ my_string = raw_input("Insert String: ")
 print len(my_string)
 print my_string.upper()
 ___________________________________________________________________________________
+from datetime import datetime
+now = datetime.now()
+
+print '%02d/%02d/%4d %02d:%02d:%02d' % (now.month, now.day, now.year, now.hour, now.minute, now.second)
+___________________________________________________________________________________
+
