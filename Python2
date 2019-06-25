@@ -34,4 +34,32 @@ now = datetime.now()
 
 print '%02d/%02d/%4d %02d:%02d:%02d' % (now.month, now.day, now.year, now.hour, now.minute, now.second)
 ___________________________________________________________________________________
+"""
+This program generates passages that are generated in mad-lib format
+Author: Noel 
+"""
+
+# The template for the story
+
+STORY = "This morning %s woke up feeling %s. 'It is going to be a %s day!' Outside, a bunch of %ss were protesting to keep %s in stores. They began to %s to the rhythm of the %s, which made all the %ss very %s. Concerned, %s texted %s, who flew %s to %s and dropped %s in a puddle of frozen %s. %s woke up in the year %s, in a world where %ss ruled the world."
+
+print "Mad Libs has started"
+name = raw_input("Enter a name: ")
+adjective1 = raw_input("Please give the first adjective: ")
+adjective2 = raw_input("Please give the second adjective: ")
+adjective3 = raw_input("Please give the third adjective: ")
+verb = raw_input("Please give the a verb: ")
+noun1 = raw_input("Please give the first noun: ")
+noun2 = raw_input("Please give the second noun: ")
+animal = raw_input("Please give one animal: ")
+food = raw_input("Please give one food: ")
+fruit = raw_input("Please give one fruit: ")
+superhero = raw_input("Please give one superhero: ")
+country = raw_input("Please give one country: ")
+dessert = raw_input("Please give one dessert: ")
+year = raw_input("Please give a timeframe in year format. Ex 1989: ")
+
+print STORY % (name, adjective1, adjective2, animal, food, verb, noun1, fruit, adjective3, name, superhero, name, country, name, dessert, name, year, noun2)
+___________________________________________________________________________________
+
 
