@@ -197,3 +197,24 @@ inventory['backpack'].sort()
 inventory['backpack'].remove('dagger')
 inventory['gold'] += 50
 ___________________________________________________________________________________
+#This program takes prints out the total $ if all stock is sold
+prices = {
+  "banana" : 4,
+  "apple"  : 2,
+  "orange" : 1.5,
+  "pear"   : 3,
+}
+stock = {
+  "banana" : 6,
+  "apple"  : 0,
+  "orange" : 32,
+  "pear"   : 15,
+}
+
+for key in prices:
+  total = total + (prices[key]*stock[key])
+  print key
+  print "price: %s" % prices[key]
+  print "stock: %s" % stock[key]
+print total
+___________________________________________________________________________________
