@@ -145,3 +145,37 @@ def trip_cost(city, days, spending_money):
   return plane_ride_cost(city) + hotel_cost(days - 1) + rental_car_cost(days) + spending_money
 print trip_cost("Los Angeles", 5, 600)
 ___________________________________________________________________________________
+"""program that rolls a pair of dice and asks the user to guess the sum. If the users guess is equal to the total value of the dice roll, the user wins! Otherwise, the computer wins."""
+from random import randint
+from time import sleep
+
+def get_user_guess():
+  guess = int(raw_input("Please enter a number > 1: "))
+  return guess
+
+def roll_dice(number_of_sides):
+  first_roll = randint(1, number_of_sides)
+  second_roll = randint(1, number_of_sides)
+  max_val = number_of_sides * 2
+  print "The maximum possible value is %d" % max_val
+  guess = get_user_guess()
+  if guess > max_val:
+    print "Guess not allowed"
+  else:
+    print "Rolling..."
+    sleep(2)
+    print "The first die is %d" % first_roll
+    sleep(1)
+    print "The second die is %d" % second_roll
+    sleep(1)
+    total_roll = first_roll + second_roll
+    print "Result..."
+    sleep(1)
+    if total_roll == guess:
+      print "You won!"
+    else:
+      print "You lost..."
+      
+roll_dice(6)
+___________________________________________________________________________________   
+    
