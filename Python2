@@ -394,6 +394,12 @@ def digit_sum(n):
     results = results + x
   return results
 ___________________________________________________________________________________
-
-
+#This program does factorial calculations
+def factorial(x):
+    results = 1
+    while x > 0:
+        results *= x
+        x -= 1
+    return results
+___________________________________________________________________________________
 
