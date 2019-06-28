@@ -384,8 +384,16 @@ for turn in range(3):
     if turn == 3:
     	print "Game Over"
     print_board(board)
-    ___________________________________________________________________________________
-    
+___________________________________________________________________________________
+#This program takes individual numbers of the complete number and adds them
+def digit_sum(n):
+  results = 0
+  n = str(n)
+  for x in n:
+    x = int(x)
+    results = results + x
+  return results
+___________________________________________________________________________________
 
 
 
