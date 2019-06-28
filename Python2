@@ -412,5 +412,15 @@ def is_prime(x):
         return False
     return True
  ___________________________________________________________________________________
+ #This program reverses words
  
+def reverse(text):
+  x = len(text) -1
+  results = ""
+  for y in text:
+    results += text [x]
+    x -= 1
+  print results  
+  return results
+  ___________________________________________________________________________________
     
