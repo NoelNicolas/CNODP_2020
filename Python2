@@ -423,4 +423,14 @@ def reverse(text):
   print results  
   return results
   ___________________________________________________________________________________
+This program removes vowels with the exception of y
+def anti_vowel(text):
+    result = ""
+    vowels = "aeiouAEIOU"
+    for x in text:
+          if x not in vowels:
+            result += x
+    return result
+print anti_vowel("hello book")
+  ___________________________________________________________________________________
     
