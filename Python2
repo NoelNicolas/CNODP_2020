@@ -448,5 +448,19 @@ def scrabble_score(word):
       total += score[x]
   return total
   ___________________________________________________________________________________
+#This program censors certain words in a sentence
+def censor(text, word):
+  results = ""
+  censored_word = "*" * len(word)
+  words = text.split()
+  y = 0
+  for x in words:
+    if x == word:
+      words[y] = censored_word
+    y += 1
+  results = " ".join(words)
+  return results
+#print censor("hey hey hey", "hey")  	
+    
   
       
