@@ -1,0 +1,93 @@
+//this program converts Fahrenheit to Celsius
+#include <iostream>
+
+int main() {
+  
+  double tempf;
+  double tempc;
+  
+  // Ask the user
+  std::cout <<"Enter the temperature in Fahrenheit: \n";
+  std::cin >> tempf;
+  
+  
+  tempc = (tempf - 32) / 1.8;
+  
+  std::cout << "The temp is " << tempc << " degrees Celsius.\n";
+  
+}
+_____________________________________________________________________
+
+//this program calculates BMI
+#include <iostream>
+
+int main() {
+  
+  double height, weight, bmi;
+  
+  // Ask user for their height
+  std::cout << "What is your weight in pounds? \n";
+  std::cin >> weight;
+  //converts weight to kg
+  weight = weight * 0.453592;
+  // Now ask the user for their weight and calculate BMI
+  std::cout << "Type in your height inches: \n";
+  std::cin >> height;
+  //converts height to meters
+  height = height * 0.0254;
+  
+  bmi = weight/(height*height);
+  std::cout << bmi << "\n";
+  
+  return 0;
+
+}
+_______________________________________________________________________
+//this program simulates a coin flip
+#include <iostream>
+#include <stdlib.h>
+#include <ctime>
+
+int main() {
+  
+  // Create a number that's 0 or 1
+  
+  srand (time(NULL));
+  int	coin = rand() % 2;
+  
+  // If number is 0: Heads
+  // If it is not 0: Tails
+  
+  if (coin == 0) {
+  
+    std::cout << "Heads\n";
+  
+  }
+	else {
+	
+    std::cout << "Tails\n";
+  
+  }
+  
+}
+_______________________________________________________________________
+
+//this program determines leap years
+#include <iostream>
+
+int main() {
+  int year;
+  std::cout << "Please Enter a year: \n";
+  std::cin >> year;
+  if ((year%4 == 0 && year%100 != 0) or year % 400 ==0 ){
+    std::cout << "This " << year <<  " is a leap year\n";
+  }
+    else{
+     std::cout << "This " << year << " is not a leap year\n";
+  
+  }
+  
+}
+_______________________________________________________________________
+
+
