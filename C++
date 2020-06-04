@@ -89,5 +89,140 @@ int main() {
   
 }
 _______________________________________________________________________
+//this program uses a while loop to ask a user to guess a number between 1-10
+#include <iostream>
 
+int main() {
+
+  int guess;
+  
+  int tries = 0;
+
+  std::cout << "I have a number 1-10.\n";
+  std::cout << "Please guess it: ";
+  std::cin >> guess;
+ 
+  // Write a while loop here:
+  while (guess !=8 && tries < 50){
+    std::cout << "Wrong guess, try again: \n";
+    std::cin >> guess;
+    tries++;
+  }
+  
+  
+  
+  
+  if (guess == 8) {
+    
+    std::cout << "You got it!\n";
+  
+  }  
+  
+}
+_______________________________________________________________________
+//this program squares number from 0 to 9
+#include <iostream>
+
+int main() {
+  
+  int i = 0;
+  int square = 0;
+  
+  // Write a while loop here:
+  while (i < 10){
+    square = i * i;
+    std::cout << i << "   " << square << "\n";
+    i++;
+  }
+  
+}
+_______________________________________________________________________
+//this program uses a for loop to print 99-0 bottles of pop on the wall
+#include <iostream>
+
+int main() {
+
+  // Write a for loop here:
+  for (int i = 99; i > 0; i--) {
+    
+    std::cout << i << " bottles of pop on the wall. \n" << "Take one down and pass it around.\n";
+    i--;
+    std::cout << i << " bottles of pop on the wall. \n"; 
+    
+  }  
+
+}
+_______________________________________________________________________
+//this program adds all delivery orders and prints the total
+#include <iostream>
+#include <vector>
+  
+int main() {
+  
+  std::vector<double> delivery_order;
+  
+  delivery_order.push_back(8.99);
+  delivery_order.push_back(3.75);
+  delivery_order.push_back(0.99);
+  delivery_order.push_back(5.99);
+  double total = 0.0;
+  // Calculate the total using a for loop:
+  for(int i = 0; i < delivery_order.size(); i++){
+    total += delivery_order[i];
+  }
+  std::cout << total;
+
+  
+}
+_______________________________________________________________________
+//this program sums the odd and even numbers separately
+#include <iostream>
+#include <vector>
+
+int main() {
+
+  int total_even = 0;
+  int product_odd = 1;
+
+  std::vector<int> numbers = {2, 4, 3, 6, 1, 9};
+
+  for (int i = 0; i < numbers.size(); i++) {
+
+    if (numbers[i] % 2 == 0) {
+
+      total_even = total_even + numbers[i];
+
+    } else {
+
+      product_odd = product_odd * numbers[i];
+
+    }
+
+  }
+
+  std::cout << "Sum of even: " << total_even << "\n";
+  std::cout << "Product of odd: " << product_odd;
+
+}
+_______________________________________________________________________
+//This program has a function that says your Noel 5 times
+#include <iostream>
+
+// Define name_x_times() below:
+void name_x_times(std::string name, int x){
+while(x>0){
+  std::cout << name << "\n";
+  x--;
+}
+}
+
+int main() {
+  
+  std::string my_name = "Noel";
+  int some_number = 5; // Change this if you like!
+  // Call name_x_times() below with my_name and some_number
+ name_x_times(my_name, some_number); 
+  
+}
+_______________________________________________________________________
 
