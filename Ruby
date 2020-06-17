@@ -1,31 +1,148 @@
-#First program for Ruby, shows data types
+#This program determines if the integer provided is negative/positive/zero
 
-my_num = 25   
+print "Integer please: "
+user_num = Integer(gets.chomp)
 
-my_boolean = true   
+if user_num < 0
+  puts "You picked a negative integer!"
+elsif user_num > 0
+  puts "You picked a positive integer!"
+else
+  puts "You picked zero!"
+end
+_____________________________________________________________________
+#This program changes user input s to th/S to Th
+print "Please provide a string "
+user_input = gets.chomp
+#user_input.downcase!
 
-my_string =  "Ruby"  
+if user_input == ""
+  print "invalid input, please provide a string "
+  user_input = gets.chomp
+  #user_input.downcase!
+elsif user_input.include? "s" or "S"
+  user_input.gsub!(/s/, "th")
+  user_input.gsub!(/S/, "Th")
+else
+  puts "there is no s in the string provided"
+end
 
-puts my_num
-puts my_boolean
-puts my_string
-_______________________________________________________________________
-#This program demonstrates how to manipulate user input cases
-print "What's your first name? "
-first_name = gets.chomp
-first_name.capitalize!
+puts "Your new string is #{user_input}"
+_____________________________________________________________________
+#This program asks for a sentence and gives the option to redact a word
+puts "Please enter a sentence: "
+text = gets.chomp
 
-print "What's your last name? "
-last_name = gets.chomp
-last_name.capitalize!
+puts "Please enter a word to redact: "
+redact = gets.chomp
 
-print "What city are you from? "
-city = gets.chomp
-city.capitalize!
+words = text.split(" ")
 
-print "What state or province are you from? "
-state = gets.chomp
-state.upcase!
+words.each do |x|
+  if x == redact
+    print "REDACTED "
+  else
+    print x + " "
+  end
+end
+_____________________________________________________________________
+#Prints key value pair
+secret_identities = {
+  "The Batman" => "Bruce Wayne",
+  "Superman" => "Clark Kent",
+  "Wonder Woman" => "Diana Prince",
+  "Freakazoid" => "Dexter Douglas"
+}
+  
+secret_identities.each do |x, y|
+  puts "#{x}: #{y}"
+end
+_____________________________________________________________________
+#iterates though a multidimentional array
+s = [["ham", "swiss"], ["turkey", "cheddar"], ["roast beef", "gruyere"]]
 
-puts "Your name is #{first_name} #{last_name} and you're from #{city}, #{state}!"
-_______________________________________________________________________
+s.each do |x| 
+  x.each do |y| 
+    puts y 
+  end 
+end
+_____________________________________________________________________
+This program takes a sentence and counts the number of times the words are used
+
+puts "Please enter a sentence: "
+text = gets.chomp
+words = text.split
+
+frequencies = Hash.new(0)
+
+words.each do |word| frequencies[word] +=1 end
+frequencies = frequencies.sort_by do |x, y|
+  y
+end
+frequencies.reverse!
+
+frequencies.each do |word, frequency| puts word + " " + frequency.to_s end
+_____________________________________________________________________
+#This program sorts alphabetically and has an option to reverse the order
+def alphabetize(arr, rev = false)
+arr.sort!
+  if rev == true
+    arr.reverse!
+  else
+    return arr
+  end
+end
+
+x = ["Nicolas", "Noel", "is", "name", "My"]
+
+puts alphabetize(x, rev = true)
+_____________________________________________________________________
+#This program asks to add, update, delete, and display movies. Movies are rated and stored in a hash (titles are symbols and ratings are integers)
+movies = {
+  Castaway: 5
+}
+puts "Please enter a choice: 
+add to add a movie
+update to update a movie
+display to display a movie
+delete to delete a movie"
+choice = gets.chomp!
+
+case choice
+  when "add"
+    puts "Please enter a movie title! "
+    title = gets.chomp!
+    puts "Please enter the rating: "
+    rating = gets.chomp!
+    if movies[title.to_sym].nil?
+      movies[title.to_sym] = rating.to_i
+    else
+      puts "The movie already exists"
+    end
+  when "update"
+    puts "Please enter a movie title! "
+    title = gets.chomp!
+    if movies[title.to_sym].nil?
+      puts "The movie is new and cannot be updated"
+    else
+      puts "Please enter the rating: "
+      rating = gets.chomp!
+      movies[title.to_sym] = rating.to_i
+    end
+  when "display"
+    movies.each do |movie, rating|
+      puts "#{movie}: #{rating}"
+    end
+  when "delete"
+    puts "Please enter a movie title! "
+    title = gets.chomp!
+    if movies[title.to_sym].nil?
+      puts "Error, movie does not exist"
+    else
+      movies.delete(title.to_sym)
+      puts "#{title} has been deleted"
+    end
+  else
+    puts "Error!"
+end
+_____________________________________________________________________
