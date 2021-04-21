@@ -113,7 +113,7 @@ void loop() {
 
     delay(500);
     servo.write(90);
-    delay(1000);
+    delay(500);
     servo.write(180); //looks left
     delay(500);
     leftEcho = getDistance();
