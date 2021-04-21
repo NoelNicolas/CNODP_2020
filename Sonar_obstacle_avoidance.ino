@@ -2,7 +2,7 @@
 //This code takes inputs from an ultrasonic sensor module
 //The module is on a servo that rotates 0-180 deg
 //The module uses sonar to detect objects from 0-180 deg when the servo moves
-//The car moves using inputs from the sensor
+//The car moves using sensor data
 
 //    The direction of the car's movement
 //  ENA   ENB   IN1   IN2   IN3   IN4   Description
