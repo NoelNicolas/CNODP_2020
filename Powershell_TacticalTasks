@@ -1,0 +1,44 @@
+#Execution Tasks to call Functions
+Import-Module .\SurveyScripts.psm1
+$creds    = Get-Credential ###.net\Username
+$allhosts = Import-Csv -Path .\WinHosts.csv
+#######################Processes#######################
+#Change Where-Object Parameter
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+
+#Change Reference Object
+$ht = @{
+        ReferenceObject  = Import-Csv .\Win10BaselineProcs.csv
+        DifferenceObject = $null
+        Property         = "hash", "path"
+        PassThru         = $true
+}
+
+$current = Survey-Processes -ComputerName $targets -Credential $creds
+
+foreach ($ip in $targets)
+{
+ $ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash, path -Unique
+ Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>" -and $_.path -ne $null}   
+}
+#######################Local Accounts#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+
+#Change ReferenceObject
+$ht = @{
+        ReferenceObject  = Import-Csv .\LocalAccounts.csv
+        DifferenceObject = $null
+        Property         = "name"
+        PassThru         = $true
+}
+
+$current = Survey-Accounts -ComputerName $targets -Credential $creds
+
+{
+ $ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash, path -Unique
+ Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>" -and $_.path -ne $null}   
+}
+
+#######################Local Accounts#######################
