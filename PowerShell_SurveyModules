@@ -1,0 +1,278 @@
+function Survey-Accounts
+{
+    [CmdletBinding()]
+    Param
+    (
+        #Enter Computername by IP or fully qualified domain name
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]
+        $ComputerName,
+
+        # Enter Domain Credentials
+        [pscredential]
+        $Credential
+    )
+
+    Begin
+    {
+        if (!$Credential)
+        {
+            $Credential = Get-Credential
+        }
+    }
+    Process
+    {
+    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock{
+        Get-WmiObject -Class win32_UserAccount |
+            Select-Object -Property AccountType, Name, LocalAccount, Domain, SID
+    }#end of Invoke-Command Scriptblock
+    }#end of Process
+    End
+    {
+    }
+}
+
+function Survey-Services
+{
+    [CmdletBinding()]
+    Param
+    (
+        #Enter Computername by IP or fully qualified domain name
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]
+        $ComputerName,
+
+        # Enter Domain Credentials
+        [pscredential]
+        $Credential
+    )
+
+    Begin
+    {
+        if (!$Credential)
+        {
+            $Credential = Get-Credential
+        }
+    }
+    Process
+    {
+    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock{
+        Get-WmiObject -Class win32_service |
+            Select-Object -Property Name, PathName, State, StartMode, StartName
+    }#end of Invoke-Command Scriptblock
+    }#end of Process
+    End
+    {
+    }
+}
+
+function Survey-FileHash
+{
+    [CmdletBinding()]
+    Param
+    (
+        #Enter Computername by IP or fully qualified domain name
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]
+        $ComputerName,
+
+        # Enter Domain Credentials
+        [pscredential]
+        $Credential,
+
+        # Enter a File Path
+        [string]
+        $Path
+    )
+
+    Begin
+    {
+        if (!$Credential)
+        {
+            $Credential = Get-Credential
+        }
+    }
+    Process
+    {
+    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock{
+        Get-ChildItem -Path $using:path |
+            Where-Object {$_.Extension} |
+                Select-Object name, @{name="hash"; expression={(certutil -hashfile $_.fullname SHA256)[1] -replace " ", ""}
+    }#end of Invoke-Command Scriptblock
+    }#end of Process
+    End
+    {
+    }
+}
+}
+
+function Survey-Processes
+{
+    [CmdletBinding()]
+    Param
+    (
+        #Enter Computername by IP or fully qualified domain name
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]
+        $ComputerName,
+
+        # Enter Domain Credentials
+        [pscredential]
+        $Credential
+    )
+
+    Begin
+    {
+        if (!$Credential)
+        {
+            $Credential = Get-Credential
+        }
+    }
+    Process
+    {
+    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock{
+        Get-WmiObject -Class win32_process|
+            Select-Object -Property Name, ProcessID, Path, Commandline,
+            @{name="Hash"; expression= {if ($_.Path)
+                                        {
+                                            (certutil -hashfile $_.path SHA256)[1] -replace " ", ""
+                                        }
+                                        else
+                                        {""}
+            }#end of expression
+            },#end of hashtable
+            @{name="Process_Owner"; expression={$_.getowner().domain + "\" + $_.getowner().user}}
+    }#end of Invoke-Command Scriptblock
+    }#end of Process
+    End
+    {
+    }
+}
+
+function Survey-FireWall
+{
+    [CmdletBinding()]
+    Param
+    (
+        #Enter Computername by IP or fully qualified domain name
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]
+        $ComputerName,
+
+        # Enter Domain Credentials
+        [pscredential]
+        $Credential
+    )
+
+    Begin
+    {
+        if (!$Credential)
+        {
+            $Credential = Get-Credential
+        }
+    }
+    Process
+    {
+    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock{
+        $rules = Get-NetFirewallRule | Where-Object {$_.Enabled}
+        $portfilter = Get-NetFirewallPortFilter
+        $addressfilter = Get-NetFirewallAddressFilter
+        foreach ($rule in $rules)
+        {
+            $ruleport    = $portfilter | Where-Object {$_.InstanceID -eq $rule.InstanceID}
+            $ruleaddress = $addressfilter | Where-Object {$_.InstanceID -eq $rule.InstanceID}
+            $data        = @{
+                            InstanceID    = $rule.instanceID.toString()
+                            Direction     = $rule.direction.toString()
+                            Action        = $rule.action.toString()
+                            LocalAddress  = $ruleaddress.LocalAddress -join ","
+                            RemoteAddress = $ruleaddress.RemoteAddress -join ","
+                            Protocol      = $ruleport.Protocol.toString()
+                            LocalPort     = $ruleport.LocalPort.toString() -join ","
+                            RemotePort    = $ruleport.RemotePort.toString() -join ","
+
+            }#end of data hashtable
+            New-Object -TypeName psobject -Property $data
+        }
+    }#end of Invoke-Command Scriptblock
+    }#end of Process
+    End
+    {
+    }
+}
+
+function Survey-Accounts
+{
+    [CmdletBinding()]
+    Param
+    (
+        #Enter Computername by IP or fully qualified domain name
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]
+        $ComputerName,
+
+        # Enter Domain Credentials
+        [pscredential]
+        $Credential,
+
+        [Parameter(Mandatory=$true)]
+        [string[]]
+        $RegistryAutoRunLoc
+    )
+
+    Begin
+    {
+        if (!$Credential)
+        {
+            $Credential = Get-Credential
+        }
+    }
+    Process
+    {
+    Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock{
+        $autorundirs = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+                       "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
+    foreach ($dir in $autorundirs)
+    {
+        foreach ($file in Get-ChildItem -Path $dir -Recurse | Where-Object {$_.Extension})
+        {
+            $data = @{
+                        type     = "AutoRun Directory"
+                        file     = $file.fullname
+                        hash     = (certutil -hashfile $file.fullname SHA256)[1] -replace " ", ""
+                        location = $dir
+                        command  = $null
+            
+            }#end of data hashtable
+            New-Object -TypeName psobject -Property $data
+        }#end of $file foreach loop
+                           
+    }#end of autorundir foreach loop
+    foreach ($location in $using:RegistryAutoRunLoc)
+    {
+        if (!(Test-Path -Path $location))
+        {continue}
+        $reg = Get-Item -Path $location -ErrorAction SilentlyContinue
+        foreach ($key in $reg.getvaluenames())
+        {
+            $command = $reg.getvalue($key)
+            $file    = $command -replace "\", "" -replace "\.exe.*", ".exe"
+            $data    = @{
+                            type    = "AutoRun Registry"
+                            file    = $file
+                            hash    = (certutil -hashfile $file SHA256)[1] -replace " ", ""
+                            command = $command
+            }#end of $data hashtable
+            New-Object -TypeName psobject -Property $data
+        }
+    }#end of $location foreach loop
+
+    }#end of Invoke-Command Scriptblock
+    }#end of Process
+    End
+    {
+    }
+}
+
+Export-ModuleMember -Function Survey-Accounts, Survey-Services, Survey-FileHash,
+                              Survey-Processes, Survey-Firewall, Survey-AutoRuns
