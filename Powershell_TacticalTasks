@@ -6,7 +6,6 @@ $allhosts = Import-Csv -Path .\WinHosts.csv
 #Change Where-Object Parameter
 $targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
 $allhosts = Import-Csv -Path .\WinHosts.csv
-
 #Change Reference Object
 $ht = @{
         ReferenceObject  = Import-Csv .\Win10BaselineProcs.csv
@@ -19,13 +18,12 @@ $current = Survey-Processes -ComputerName $targets -Credential $creds
 
 foreach ($ip in $targets)
 {
- $ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash, path -Unique
- Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>" -and $_.path -ne $null}   
+$ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash, path -Unique
+Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>" -and $_.path -ne $null}  
 }
 #######################Local Accounts#######################
 $targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
 $allhosts = Import-Csv -Path .\WinHosts.csv
-
 #Change ReferenceObject
 $ht = @{
         ReferenceObject  = Import-Csv .\LocalAccounts.csv
@@ -33,12 +31,136 @@ $ht = @{
         Property         = "name"
         PassThru         = $true
 }
-
 $current = Survey-Accounts -ComputerName $targets -Credential $creds
-
+foreach ($ip in $targets)
 {
- $ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash, path -Unique
- Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>" -and $_.path -ne $null}   
+$ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash, path -Unique
+Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>" -and $_.path -ne $null}  
+}
+#######################Services#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+$ht = @{
+        ReferenceObject  = Import-Csv .\Win10ServicesBaseline.csv
+        DifferenceObject = $null
+        Property         = "name"
+        PassThru         = $true
+}
+$current = Survey-Services -ComputerName $targets -Credential $creds
+foreach ($ip in $targets)
+{
+$ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property name -Unique
+Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>"}   
+}
+#######################AutoRuns#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+$AutoRunKeys = Get-Content .\AutoRunkeys.txt
+
+$ht = @{
+        ReferenceObject  = Import-Csv .\Win10AutoBaseline.csv
+        DifferenceObject = $null
+        Property         = "hash"
+        PassThru         = $true
+}
+$current = Survey-AutoRuns -ComputerName $targets -Credential $creds -RegistryAutoRunLoc $AutoRunKeys
+
+foreach ($ip in $targets)
+{
+$ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property hash -Unique
+Compare-Object @ht | Where-Object {$_.sideindicator -eq "=>"}   
 }
 
-#######################Local Accounts#######################
+#######################Firewall#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+$ht = @{
+        ReferenceObject  = Import-Csv .\Win10FirewallBaseline.csv
+        DifferenceObject = $null
+        Property         = "direction", "action", "localaddress", "remoteaddress", "localport", "remoteport"
+        PassThru         = $true
+}
+$current = Survey-Firewall -ComputerName $targets -Credential $creds
+foreach ($ip in $targets)
+{
+$ht.differenceobject = $current | Where-Object {$_.pscomputername -eq $ip} | Sort-Object -Property "direction", "action", "localaddress", "remoteaddress", "localport", "remoteport" -Unique
+Compare-Object @ht | Select-Object *, @{name="IP"; expression={$ip}} 
+}
+
+########################LFA########################
+#######################Processes#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+$targets.count
+$procs = Survey-Processes -ComputerName $targets -Credential $creds
+$procs | Sort-Object -Property pscomputername,hash -Unique | Group-Object hash | Where-Object {$_.count -le 1} | Select-Object -ExpandProperty Group
+#######################Processes#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+$targets.count
+$services = Survey-Services -ComputerName $targets -Credential $creds
+$procs | Sort-Object -Property pscomputername,name -Unique | Group-Object name | Where-Object {$_.count -le 1} | Select-Object -ExpandProperty Group
+#######################AutoRuns#######################
+$targets  = $allhosts | Where-Object {$_.os -eq "Win10"} | Select-Object -ExpandProperty ip
+$allhosts = Import-Csv -Path .\WinHosts.csv
+$AutoRunKeys = Get-Content .\AutoRunkeys.txt
+$targets.count
+$autoruns = Survey-AutoRuns -ComputerName $targets -Credential $creds -RegistryAutoRunLoc $AutoRunKeys
+$autoruns | Sort-Object -Property pscomputername,hash -Unique | Group-Object hash | Where-Object {$_.count -le 1} | Select-Object -ExpandProperty Group
+#######################Account Creation#######################
+Invoke-Command -ComputerName name.names.net -Credential $creds -ScriptBlock {
+    $logfilter = @{
+    Logname = "Security"
+    ID      = 4720
+    }#end of $logfilter hashtable
+    Get-WinEvent -FilterHashtable $logfilter
+} | Select-Object -Property RecordID, Message | Format-Table -Wrap #end of ScriptBlock
+#######################Privileged Group#######################
+Invoke-Command -ComputerName name.names.net -Credential $creds -ScriptBlock {
+    $SID = ""
+    $logfilter = @{
+    Logname = "Security"
+    ID      = 4728, 4732, 4756
+    Data    = $SID
+    }#end of $logfilter hashtable
+    Get-WinEvent -FilterHashtable $logfilter
+} | Select-Object -Property RecordID, Message | Format-Table -Wrap #end of ScriptBlock
+#######################Firewall#######################
+Invoke-Command -ComputerName name.names.net -Credential $creds -ScriptBlock {
+    $logfilter = @{
+    Logname = "*fire*"
+    }#end of $logfilter hashtable
+    Get-WinEvent -FilterHashtable $logfilter
+} | Select-Object -Property TimeCreated, RecordID, Message | Format-Table -Wrap #end of ScriptBlock
+#######################Successful Logins#######################
+(Invoke-Command -ComputerName name.names.net -Credential $creds -ScriptBlock {
+    $logfilter = @{
+    Logname = "Security"
+    ID      = 4634
+    #Change DDates
+    StartTime = [datetime]"09/29/2021 00:00:00Z"
+    EndTime = [datetime]"09/29/2021 23:59:59Z"
+    }#end of $logfilter hashtable
+    Get-WinEvent -FilterHashtable $logfilter
+}).count #end of ScriptBlock
+#######################Copy Items#######################
+notepad nicolas.txt
+#Copy TO remote Computer
+$sessions = New-PSSession -ComputerName name.names.net -Credential $creds
+Copy-Item .\nicolas.txt -Destination C:\User\nicolas -ToSession $sessions
+Remove-PSSession -Session $session
+#Copy FROM remote computer
+$sessions = New-PSSession -ComputerName name.names.net -Credential $creds
+Copy-Item -Path C:\Users\nicolas\nicolas2.txt -Destination .\ -FromSession $session
+Remove-PSSession -Session $session
+#######################File Content Search#######################
+Invoke-Command -ComputerName name.names.net -Credential $creds -ScriptBlock {
+$filepath = "C:\Windows\System32"
+#SSN
+#$expression = "\d{3}-\d{2}-\d{4}"
+#email
+$expression= "[\w\.-]+@[\w\.-]+\.[\w]{2,3}"
+#strings
+$expression = "(?=.*string1)(?=.*string2 |.*String3)"
+Get-ChildItem $filepath -Recurse -File | Select-String -Pattern $expression -AllMatches | Format-Table -Property path, line -Wrap
+} 
